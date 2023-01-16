@@ -106,7 +106,7 @@ Vnw_computed = np.sum(Snw_field_dra*(pixel_dim**2)*thick*poro,axis=(0,1))
 
 # Plots 
 ## Snw vs LnIw - LnI
-fig, ax = plt.subplots(figsize=(3.54,3.54),dpi=600)
+fig, ax = plt.subplots(figsize=(1,1),dpi=150)
 
 ax.scatter(X,y,color='blue',marker='x',linewidths=0.5,alpha=0.5,label='Data')
 ax.plot(X,alpha_matched*X,color='red',linestyle='dashdot',label='Linear model')
@@ -119,10 +119,11 @@ ax.set_xlim(0,np.max(X))
 ax.set_ylim(0,np.max(y))
 ax.legend()
 plt.ticklabel_format(axis='x',style='scientific',scilimits=(4,4))
+plt.tight_layout()
 plt.show()
 
 ## Vnw computed vs Vnw theoretical
-fig, ax = plt.subplots(figsize=(3.54,3.54),dpi=600)
+fig, ax = plt.subplots(figsize=(1,1),dpi=150)
 
 ax.scatter(Vnw,Vnw_computed,marker='o',alpha=0.5,linewidths=0.5,label='Data')
 ax.axline([0,0],[1,1],linestyle='--',color='black',linewidth=1)
@@ -132,14 +133,16 @@ ax.set_xlabel('Theoretical Vnw (ml)')
 ax.set_xlim(0,np.max(Vnw))
 ax.set_ylim(0,np.max(Vnw_computed))
 ax.legend()
+plt.tight_layout()
 plt.show()
 
 ## Discrepancy Vnw
-fig, ax = plt.subplots(figsize=(3.54,3.54),dpi=600)
+fig, ax = plt.subplots(figsize=(1,1),dpi=150)
 
 ax.scatter(np.arange(1,len(Vnw_computed)+1,1),Vnw_computed-Vnw,marker='o',alpha=0.5,linewidths=0.5,color='green')
 ax.set_title('Discrepancy in NWP Volume')
 ax.set_ylabel('Vnw (ml)')
+plt.tight_layout()
 plt.show()
 
 ## Saturation field 
@@ -147,7 +150,7 @@ def plot_map(Sof,tiff_file_drainage,title):
     
     img=plt.imread(tiff_file_drainage)
     
-    fig,ax = plt.subplots(figsize=(3.54,3.54),dpi=600)
+    fig,ax = plt.subplots(figsize=(1,1),dpi=150)
     
     img=ax.imshow(img,cmap='gray')
     Sof_field=np.ma.masked_where(Sof<0.05,Sof)
@@ -170,6 +173,8 @@ def plot_map(Sof,tiff_file_drainage,title):
         labelleft=False) # labels along the bottom edge are off
     
     plt.title(title,pad=10)
+    plt.tight_layout()
+
     return plt.show()
 
 plot_map(Snw_field_dra[:,:,num_image_dra-1],tiff_file_wet,'Drainage')
