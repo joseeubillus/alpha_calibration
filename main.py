@@ -24,10 +24,15 @@ in the file alpha calibration.py
 
 st.header('Experiment directory path')
 
-st.text('Remember to use / instead of \ when adding the files path')
+st.text('''Remember to use / instead of \ when adding the files path\
+    
+    Note: add / at the end of the raw path
+    
+    ''')
 
 raw_path=st.text_input('Insert raw files path directory')
-processed_path=st.text_input('Insert processed files path directory')
+processed_path=st.text_input('Insert drainage processed files path directory')
+red_path=st.text_input('Insert redistribution files path')
 wet_path=st.text_input('Insert wet image path directory')
 
 st.header('Step 1: Porosity and pixel dimension estimation')
@@ -67,7 +72,6 @@ start_image=st.number_input('Insert image number of NWP first seen in tank')
 end_image=st.number_input('Insert image number of domain NWP breakthrough')
 interval = (end_image-start_image)//50
 
-red_path=st.text_input('Insert redistribution folder path')
 end_image_red=st.number_input('Insert last image number in redistribution stage')
 interval_red=(end_image-1)//10
 
