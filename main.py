@@ -9,13 +9,13 @@ import matplotlib.pyplot as plt
 from sklearn.linear_model import LinearRegression
 from PIL import Image
 
-header= Image.open('C:/Users/Jose/Desktop/alpha_calibration/GCCC_header.png')
+#header= Image.open("https://github.com/joseeubillus/alpha_calibration/blob/6ae04176ce8f2f37d2cc9fb8e6f90c58c839778b/GCCC_header.png")
 #Backend initial values
 
 thick = 1.8 #constant variable
 inj_rate = 0.2 #constant variable
 
-st.image(header,use_column_width=True,caption='Gulf Coast Carbon Center')
+#st.image(header,use_column_width=True,caption='Gulf Coast Carbon Center')
 st.title('CO2 SATURATION DATA PROCESSING - ALPHA CALIBRATION')
 
 st.text('Developed by: Jose Ubillus')

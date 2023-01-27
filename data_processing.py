@@ -13,11 +13,13 @@ import cv2
 import os
 from datetime import datetime
 import matplotlib.pyplot as plt
+import matplotlib.cm as cm
+import matplotlib.animation as animation
 from sklearn.linear_model import LinearRegression
 
 # Inputs
 
-os.chdir('C:/Users/Jose/Box/2022-2023 GRA/Sand Tank Experiments/2022_Ubillus_Experiments/01-05-2023_Ripples_2nd_trial/Data_processed')
+os.chdir('C:/Users/josee/Box/2022-2023 GRA/Sand Tank Experiments/2022_Ubillus_Experiments/01-05-2023_Ripples_2nd_trial/Data_processed')
 
 pixel_dim = 0.0256 # cm
 poro = 0.397
@@ -74,7 +76,7 @@ for i in image_sequence_red:
 time_DRA = []
 
 for i in image_sequence_dra:
-    path_file='C:/Users/Jose/Box/2022-2023 GRA/Sand Tank Experiments/2022_Ubillus_Experiments/01-05-2023_Ripples_2nd_trial/Drainage/'+'DRATS'+str(i)+".fit"
+    path_file='C:/Users/josee/Box/2022-2023 GRA/Sand Tank Experiments/2022_Ubillus_Experiments/01-05-2023_Ripples_2nd_trial/Drainage/'+'DRATS'+str(i)+".fit"
     timestamp=os.path.getmtime(path_file)
     datestamp=datetime.fromtimestamp(timestamp)
     time_DRA.append(datestamp)
@@ -177,10 +179,32 @@ def plot_map(Sof,tiff_file_drainage,title):
 
     return plt.show()
 
+def video_generator (imgs,tiff_file_drainage):
+    frames = []
+    fig = plt.figure()
+    dim1,dim2,dim3 = imgs.shape
+
+    img=plt.imread(tiff_file_drainage)
+    img=plt.imshow(img,cmap='gray')
+
+    Sof_field=np.ma.masked_where(imgs<0.05,imgs)
+
+    for i in range(dim3):
+        frames.append([plt.imshow(Sof_field[:,:,i],cmap='viridis',interpolation='nearest',vmin=0.1,vmax=1,animated=True)])
+
+    ani = animation.ArtistAnimation(fig,frames,interval=50,blit=True,repeat_delay=1000)
+
+    #plt.colorbar(fig,ax=ax,orientation='vertical',shrink=0.8)
+
+    return plt.show()
+
+
+
+
 plot_map(Snw_field_dra[:,:,num_image_dra-1],tiff_file_wet,'Drainage')
 
 plot_map(Snw_field_red[:,:,1],tiff_file_wet,'End of Drainage')
 
 plot_map(Snw_field_red[:,:,num_image_red-1],tiff_file_wet,'End of Redistribution')
 
-
+video_generator (Snw_field_dra,tiff_file_wet)
