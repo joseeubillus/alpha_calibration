@@ -49,6 +49,27 @@ def constructor_drainage(start_image_dra,end_image_dra,steps_divider=50):
     
     return dim1, image_sequence_dra, Iw, Snw_dra, time_dra
 
+def constructor_redistribution(start_image_red,end_image_red,dim1,Iw,steps_divider=10):
+    interval_red = (end_image_red-start_image_red)//steps_divider
+
+    image_sequence_red = np.arange(start=start_image_red,stop=end_image_red,step=interval_red,dtype=int)
+    num_image_red = len(image_sequence_red)
+
+    snw_red = np.zeros(shape=(dim1, dim1,num_image_red))
+
+    # Redistribution
+    counter = 0 
+    for i in image_sequence_red:
+        I_red=cv2.imread("Data_processed/Redistribution_processed/RED"+str(i)+'.tif',-1)
+        snw_red[:,:,counter]=np.log(Iw)-np.log(I_red)
+        counter=counter+1
+
+    return snw_red 
+
+def compute_redistribution_sat(snw_red,alpha_pixel):
+    snw_field_red = snw_red*alpha_pixel
+    return snw_field_red
+
 ## Alpha calibration
 def alpha_calibration(dim1,time_dra,Snw_dra,inj_rate,thick,poro,pixel_dim,por_vol):
 
@@ -95,7 +116,7 @@ def height_snw(snw_field_dra,h,seq,por_vol,pixel_dim,thick,poro):
             ones[:-i]=0
             
             vnw1=vnw[:,:,k]*ones
-            snw=np.sum(vnw1,axis=(0,1))/por_vol
+            snw=(np.sum(vnw1,axis=(0,1))/por_vol)*100
             
             dist.append(i*pixel_dim)
             eff_snw.append(snw)
@@ -103,6 +124,20 @@ def height_snw(snw_field_dra,h,seq,por_vol,pixel_dim,thick,poro):
         dict_snw_2d[k]= arr
         
     return dict_snw_2d
+
+def initial_residual_curves(snw_field_dra,snw_field_red,title):
+    x = snw_field_dra[:,:,-1].flatten()
+    y = snw_field_red[:,:,-1].flatten()
+
+    fig, ax = plt.subplots(figsize=(3.54,3.54),dpi=600)
+    ax.scatter(x,y,color='green',linewidths=0.1,alpha=0.3,s=1)
+    ax.axline([0,0],[1,1],linestyle='--',color='black',linewidth=1)
+    fig.suptitle(title)
+    ax.set_xlabel('Post Drainage Saturation')
+    ax.set_ylabel('Post Redistribution Saturation')
+    ax.set_xlim((0,1))
+    ax.set_ylim((0,1))
+    return plt.show()
 
 ## Plotting and video generation
 def alpha_calibration_plots(X , y , alpha_matched, alpha_pixel, Vnw, Vnw_computed):
@@ -146,7 +181,7 @@ def plot_map(Sof,Iw,title):
     fig,ax = plt.subplots(figsize=(3.54,3.54),dpi=600)
     
     ax.imshow(Iw,cmap='gray')
-    Sof_field=np.ma.masked_where(Sof<0.03,Sof)
+    Sof_field=np.ma.masked_where(Sof<0.02,Sof)
     max_val=np.round(np.max(Sof_field),2)
     Sof_field_img=ax.imshow(Sof_field,cmap='viridis',interpolation='nearest',vmin=0,vmax=max_val)
     
@@ -170,19 +205,18 @@ def height_eff_snw_plot(d,time):
     
     fig,ax = plt.subplots(figsize=(3.54,3.54),dpi=600)
     for key, value in d.items():
-        x,y=zip(*value)
+        y,x=zip(*value)
         ax.scatter(x,y,marker='x',s=5,label=key)
         ax.plot(x,y,linestyle='--',linewidth=0.5)
-    plt.xlabel('Height (cm)')
-    plt.ylabel('Effective Snw')
+    plt.ylabel('Height (cm)')
+    plt.xlabel('Effective Snw (%)')
     handles, labels = ax.get_legend_handles_labels()
     labels = ['t=0','t1','t2','t3','t4','t= '+ time]
     ax.legend(handles,labels,loc='upper center', bbox_to_anchor=(0.5, -0.17),
           fancybox=True, shadow=True,ncol=6,fontsize='x-small')
-    
     return plt.show()
 
-def video_generator (imgs,tiff_file_drainage):
+def video_generator (imgs,tiff_file_drainage,filename):
     frames = []
     fig = plt.figure()
     dim1,dim2,dim3 = imgs.shape
@@ -199,7 +233,7 @@ def video_generator (imgs,tiff_file_drainage):
 
     plt.colorbar(orientation='vertical',shrink=0.8)
     
-    f = r"C:/Users/Jose/Box/2022-2023 GRA/Sand Tank Experiments/2022-4-16-P337-P170-ripples2/Processed-Data/animation_ripples_337_170.gif" 
+    f = r"Data_processed/"+filename
     writergif = animation.PillowWriter(fps=5) 
     ani.save(f, writer=writergif)
 
