@@ -135,7 +135,7 @@ def trapping_efficiency(sat_red,sat_dra):
     return trap_eff
     
 ## Spatial data analysis 
-def height_snw(snw_field_dra,middle,h,seq,pixel_dim,kernel_size):
+def height_snw(snw_field_dra,h,seq,pixel_dim,kernel_size,middle=15):
     
     interval=h/pixel_dim
     dict_snw_2d={}
@@ -162,21 +162,12 @@ def height_snw(snw_field_dra,middle,h,seq,pixel_dim,kernel_size):
 
 def spatial_moment(snw_field_break,snw_field_dra,snw_field_red,img_seq_break,img_seq_dra,img_seq_red,poro,thick,pixel_dim,dim1):
 
-    time_break = []
-    time_dra = []
-    time_red = []
-
-    m00_break = []
-    m00_dra = []
-    m00_red = []
-
-    m10_break = []
-    m10_dra = []
-    m10_red = []
-
-    m01_break = []
-    m01_dra = []
-    m01_red = []
+    time_break, time_dra, time_red = ([] for i in range(3))
+    m00_break, m00_dra, m00_red = ([] for i in range(3))
+    m10_break, m10_dra, m10_red = ([] for i in range(3))
+    m01_break, m01_dra, m01_red = ([] for i in range(3))
+    m20_break, m20_dra, m20_red = ([] for i in range(3))
+    m02_break, m02_dra, m02_red = ([] for i in range(3))
 
     pixel_vol = pixel_dim**2 * thick
     arrays = [np.arange(1,dim1+1,1) for _ in range(dim1)]
@@ -185,47 +176,46 @@ def spatial_moment(snw_field_break,snw_field_dra,snw_field_red,img_seq_break,img
 
     for i in range(0,int(len(img_seq_break)),1):
 
-        temp = np.sum(pixel_vol * poro * snw_field_break[:,:,i])
-        temp10 = np.sum(pixel_vol * poro * snw_field_break[:,:,i] * position_x)  
-        temp01 = np.sum(pixel_vol * poro * snw_field_break[:,:,i] * position_z)  
         time_break.append(img_seq_break[i]*0.5)
-
-        m00_break.append(temp)
-        m10_break.append(temp10)
-        m01_break.append(temp01)
+        m00_break.append(np.sum(pixel_vol * poro * snw_field_break[:,:,i]))
+        m10_break.append(np.sum(pixel_vol * poro * snw_field_break[:,:,i] * position_x))  
+        m01_break.append(np.sum(pixel_vol * poro * snw_field_break[:,:,i] * position_z))
+        m20_break.append(np.sum(pixel_vol * poro * snw_field_break[:,:,i] * position_x**2))  
+        m02_break.append(np.sum(pixel_vol * poro * snw_field_break[:,:,i] * position_z**2))
 
     for i in range(0,int(len(img_seq_dra)),1):
                 
-        temp = np.sum(pixel_vol * poro * snw_field_dra[:,:,i]) 
-        temp10 = np.sum(pixel_vol * poro * snw_field_dra[:,:,i] * position_x)  
-        temp01 = np.sum(pixel_vol * poro * snw_field_dra[:,:,i] * position_z)              
         time_dra.append(img_seq_dra[i]*0.5)
-
-        m00_dra.append(temp)
-        m10_dra.append(temp10)
-        m01_dra.append(temp01)
+        m00_dra.append(np.sum(pixel_vol * poro * snw_field_dra[:,:,i]))
+        m10_dra.append(np.sum(pixel_vol * poro * snw_field_dra[:,:,i] * position_x))
+        m01_dra.append(np.sum(pixel_vol * poro * snw_field_dra[:,:,i] * position_z))
+        m20_dra.append(np.sum(pixel_vol * poro * snw_field_break[:,:,i] * position_x**2))  
+        m02_dra.append(np.sum(pixel_vol * poro * snw_field_break[:,:,i] * position_z**2))
 
     for i in range(0,int(len(img_seq_red)),1):
                 
-        temp = np.sum(pixel_vol * poro * snw_field_red[:,:,i])              
         time_red.append(time_dra[-1]+img_seq_red[i]*0.5)
-        temp10 = np.sum(pixel_vol * poro * snw_field_red[:,:,i] * position_x)  
-        temp01 = np.sum(pixel_vol * poro * snw_field_red[:,:,i] * position_z)
+        m00_red.append(np.sum(pixel_vol * poro * snw_field_red[:,:,i]))              
+        m10_red.append(np.sum(pixel_vol * poro * snw_field_red[:,:,i] * position_x))
+        m01_red.append(np.sum(pixel_vol * poro * snw_field_red[:,:,i] * position_z))
+        m20_red.append(np.sum(pixel_vol * poro * snw_field_break[:,:,i] * position_x**2))  
+        m02_red.append(np.sum(pixel_vol * poro * snw_field_break[:,:,i] * position_z**2))
+    
+    x_brk, z_brk = np.divide(m10_break,m00_break), np.divide(m01_break,m00_break)
+    x_dra, z_dra = np.divide(m10_dra,m00_dra), np.divide(m01_dra,m00_dra)
+    x_red, z_red = np.divide(m10_red,m00_red), np.divide(m01_red,m00_red)
+    lsx_brk, lsz_brk = abs(np.divide(m20_break,m00_break) - x_brk**2), abs(np.divide(m02_break,m00_break) - z_brk**2)
+    lsx_dra, lsz_dra = abs(np.divide(m20_dra,m00_dra) - x_dra**2), abs(np.divide(m02_dra,m00_dra) - z_dra**2)
+    lsx_red, lsz_red = abs(np.divide(m20_red,m00_red) - x_red**2), abs(np.divide(m02_red,m00_red) - z_red**2)
 
-        m00_red.append(temp)
-        m10_red.append(temp10)
-        m01_red.append(temp01)
+    moments_dict = {'time_break':time_break,'time_dra':time_dra,'time_red':time_red,
+                    'm00_break':m00_break,'m00_dra':m00_dra,'m00_red':m00_red,
+                    'x_brk':x_brk,'x_dra':x_dra,'x_red':x_red,
+                    'z_brk':z_brk,'z_dra':z_dra,'z_red':z_red,
+                    'lsx_brk':lsx_brk,'lsx_dra':lsx_dra,'lsx_red':lsx_red,
+                    'lsz_brk':lsz_brk,'lsz_dra':lsz_dra,'lsz_red':lsz_red}
     
-        x_brk = np.divide(m10_break,m00_break)
-        z_brk = np.divide(m01_break,m00_break)
-    
-        x_dra = np.divide(m10_dra,m00_dra)
-        z_dra = np.divide(m01_dra,m00_dra)
-    
-        x_red = np.divide(m10_red,m00_red)
-        z_red = np.divide(m01_red,m00_red)
-
-    return time_break, time_dra, time_red, m00_break, m00_dra, m00_red, x_brk, z_brk, x_dra, z_dra, x_red, z_red
+    return moments_dict
 
 
 
