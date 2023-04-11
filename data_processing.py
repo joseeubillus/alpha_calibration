@@ -17,35 +17,36 @@ dict_experiments = {'E':['2022-4-2_Ripples_337_230',14,55,568,1,115,0.0226,0.403
                     'G':['01-05-2023_Ripples_337_140',1,683,2705,1,1463,0.0256,0.407,0.15,1570.57,'360 min'],
                     'H':['02-03-2023_Ripples_337_120',1,693,1865,1,91,0.0252,0.2785,0.128,1065,'350 min'],
                     'I':['01-25-2023_Ripples_337_080',6,553,2477,1,91,0.0253,0.2579,0.161,1035,'292 min'],
-                    'J':['03-02-2023_Climbing_Ripples_337_140',18,1864,2213,1,6,0.0244,0.30,0.145,1122,'984 min']} 
+                    'J':['03-02-2023_Climbing_Ripples_337_140',18,1864,2213,1,6,0.0244,0.30,0.145,1122,'984 min'],
+                    'K':['03-31-2023_Climbing_Ripples_337_140_washed',33,1074,2390,1,66,0.025,0.312,0.173,1182,'555 min']}
 #[path,start_drainage,domain_drainage,end_drainage,start_red,end_red,pixel_dim,poro,inj_rate,por_vol,time]
 
 thick = 1.8
 h = 1
 kernel_size = 12
 
-path_dict = dict_experiments['I'][0]
+path_dict = dict_experiments['K'][0]
 ## Drainage inputs
-start_image_dra = dict_experiments['I'][1]# NWP first seen in tank
-domain_break = dict_experiments['I'][2] # domain breaktrough
-end_image_dra = dict_experiments['I'][3]
+start_image_dra = dict_experiments['K'][1]# NWP first seen in tank
+domain_break = dict_experiments['K'][2] # domain breaktrough
+end_image_dra = dict_experiments['K'][3]
 ## Redistribution inputs
-start_image_red = dict_experiments['I'][4]
-end_image_red = dict_experiments['I'][5]
+start_image_red = dict_experiments['K'][4]
+end_image_red = dict_experiments['K'][5]
 
-pixel_dim = dict_experiments['I'][6]
-poro = dict_experiments['I'][7]
-inj_rate = dict_experiments['I'][8]
-por_vol = dict_experiments['I'][9]
-time = dict_experiments['I'][10]
+pixel_dim = dict_experiments['K'][6]
+poro = dict_experiments['K'][7]
+inj_rate = dict_experiments['K'][8]
+por_vol = dict_experiments['K'][9]
+time = dict_experiments['K'][10]
 
-os.chdir('C:/Users/josee/Box/2022-2023 GRA/Sand Tank Experiments/2022_Ubillus_Experiments/'+path_dict)
+os.chdir('E:/2022_Ubillus_Experiments/'+path_dict)
 
 
 # Constructors
 dim1, image_sequence_break, image_sequence_dra, Iw, Snw_break, time_break, Snw_dra, time_dra = ft.constructor_drainage(start_image_dra,domain_break,end_image_dra)
 
-snw_red, image_sequence_red = ft.constructor_redistribution(start_image_red,end_image_red,dim1,Iw)
+snw_red, image_sequence_red = ft.constructor_redistribution(start_image_red,end_image_red,dim1,Iw,steps_divider=30)
 
 # Alpha calibration & saturation field
 X, y , alpha_matched, alpha_pixel, Vnw = ft.alpha_calibration(dim1,time_break,Snw_break,inj_rate,thick,poro)

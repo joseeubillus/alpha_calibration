@@ -200,6 +200,7 @@ def spatial_moments(moments_dict):
     for ax in [ax1, ax2]:
         ax.yaxis.grid(True)
 
+    ax1.set_ylim(1,2000)
     fig.tight_layout()
 
     fig, ax = plt.subplots(figsize=(3.54,3.54),dpi=600)
