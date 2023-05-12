@@ -18,29 +18,30 @@ dict_experiments = {'E':['2022-4-2_Ripples_337_230',14,55,568,1,115,0.0226,0.403
                     'H':['02-03-2023_Ripples_337_120',1,693,1865,1,91,0.0252,0.2785,0.128,1065,'350 min'],
                     'I':['01-25-2023_Ripples_337_080',6,553,2477,1,91,0.0253,0.2579,0.161,1035,'292 min'],
                     'J':['03-02-2023_Climbing_Ripples_337_140',18,1864,2213,1,6,0.0244,0.30,0.145,1122,'984 min'],
-                    'K':['03-31-2023_Climbing_Ripples_337_140_washed',33,1074,2390,1,66,0.025,0.312,0.173,1182,'555 min']}
+                    'K':['03-31-2023_Climbing_Ripples_337_140_washed',33,1074,2390,1,66,0.025,0.312,0.173,1182,'555 min'],
+                    'L':['05-08-2023_Climbing_Ripples_337_140_2',20,1069,2427,1,32,0.0252,0.28,0.18,1080,'560 min']}
 #[path,start_drainage,domain_drainage,end_drainage,start_red,end_red,pixel_dim,poro,inj_rate,por_vol,time]
 
 thick = 1.8
 h = 1
 kernel_size = 12
 
-path_dict = dict_experiments['K'][0]
+path_dict = dict_experiments['L'][0]
 ## Drainage inputs
-start_image_dra = dict_experiments['K'][1]# NWP first seen in tank
-domain_break = dict_experiments['K'][2] # domain breaktrough
-end_image_dra = dict_experiments['K'][3]
+start_image_dra = dict_experiments['L'][1]# NWP first seen in tank
+domain_break = dict_experiments['L'][2] # domain breaktrough
+end_image_dra = dict_experiments['L'][3]
 ## Redistribution inputs
-start_image_red = dict_experiments['K'][4]
-end_image_red = dict_experiments['K'][5]
+start_image_red = dict_experiments['L'][4]
+end_image_red = dict_experiments['L'][5]
 
-pixel_dim = dict_experiments['K'][6]
-poro = dict_experiments['K'][7]
-inj_rate = dict_experiments['K'][8]
-por_vol = dict_experiments['K'][9]
-time = dict_experiments['K'][10]
+pixel_dim = dict_experiments['L'][6]
+poro = dict_experiments['L'][7]
+inj_rate = dict_experiments['L'][8]
+por_vol = dict_experiments['L'][9]
+time = dict_experiments['L'][10]
 
-os.chdir('E:/2022_Ubillus_Experiments/'+path_dict)
+os.chdir('C:/Users/ubillusj/Desktop/Experiments/'+path_dict)
 
 
 # Constructors

@@ -276,7 +276,7 @@ def video_generator (imgs,tiff_file_drainage,filename):
     ani = animation.ArtistAnimation(fig,frames,interval=3000,blit=True,repeat_delay=5000)
 
     f = r"Data_processed/"+filename
-    writergif = animation.PillowWriter(fps=120) 
+    writergif = animation.PillowWriter(fps=10) 
     ani.save(f, writer=writergif)
 
     return 
