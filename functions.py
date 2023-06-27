@@ -22,7 +22,8 @@ def constructor_drainage(start_image_dra,domain_break_image,end_image_dra,steps_
     dim1,dim2 = mask.shape  
     
     interval_dra = (domain_break_image-start_image_dra)//steps_divider   
-    image_sequence_break = np.arange(start=start_image_dra,stop=domain_break_image+1,step=interval_dra,dtype=int)
+    image_sequence_break = np.arange(start=start_image_dra,stop=domain_break_image,step=interval_dra,dtype=int)
+    image_sequence_break = np.append(image_sequence_break,domain_break_image)
     image_sequence_dra = np.arange(start=domain_break_image,stop=end_image_dra+1,step=steps_divider,dtype=int)
     num_image_break = len(image_sequence_break)
     num_image_dra = len(image_sequence_dra)
